@@ -7,7 +7,8 @@ interface ResponseData {
   channelId: string;
   emoji: string;
   reactionCount: number;
-};
+  rewardAmount: number;
+}
 
 const handler = async (
   req: NextApiRequest,
@@ -27,20 +28,29 @@ const handler = async (
             curatedChannel: true,
           },
         });
+        
         if (
           server?.curatedChannel?.discordId &&
           server.emoji &&
-          server.reactionCount
+          server.reactionCount &&
+          server.rewardAmount
         ) {
-          const { emoji, reactionCount } = server;
+          const { emoji, reactionCount, rewardAmount } = server;
           return res.status(200).json({
             channelId: server.curatedChannel.discordId,
             emoji,
             reactionCount,
+            rewardAmount,
           });
+        } else {
+          console.error(`Missing data for server: ${discordId}.`);
+          console.log(
+            `emoji: ${server?.emoji}\nreactionCount: ${server?.reactionCount}\nrewardAmount: ${server?.rewardAmount}`
+          );
+          return res.status(500);
         }
       } else {
-        console.error("Discord server not found.");
+        console.error(`Discord server not found: ${discordId}`);
         return res.status(500);
       }
     } catch (error) {

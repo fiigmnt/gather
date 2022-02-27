@@ -56,8 +56,9 @@ model Server {
     id             String   @id @default(cuid())
     discordId      String?
     name           String?
-    emoji       String   @default("📰")
+    emoji          String   @default("📰")
     reactionCount  Int      @default(5)
+    rewardAmount   Int      @default(0)
     user           User     @relation(fields: [userId], references: [id])
     curatedChannel Channel? @relation(fields: [channelId], references: [id])
     userId         String
