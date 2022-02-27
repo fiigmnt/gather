@@ -21,8 +21,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const request: RequestData = req.body;
       const { username, server, curateChannel } = request;
 
-      console.log(request);
-
       if (server?.id && curateChannel?.id) {
         // find username based on discord server id
         const channel = await prisma.channel.create({
@@ -37,8 +35,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             name: username,
           },
         });
-
-        console.log(user);
 
         if (channel && user) {
           await prisma.server.create({

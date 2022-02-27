@@ -91,13 +91,9 @@ client.on("guildCreate", async (guild) => {
     });
 
     const log = await guild.fetchAuditLogs({ type: "BOT_ADD", limit: 1 });
-
     const username = log.entries.first()?.executor?.username;
 
     if (curateChannel?.id) {
-      console.log(curateChannel.id);
-      console.log(username);
-      console.log(guild.id);
       // add connect channel and server to db
       await axios.post(`${API}/create`, {
         username,
