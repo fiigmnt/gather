@@ -7,7 +7,7 @@ body {
   @apply bg-orange-50;
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  font-family: "Neue Montreal", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
@@ -18,4 +18,12 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "Neue Montreal";
+  src: url("/fonts/PPNeueMontreal-Regular.otf");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
 }
