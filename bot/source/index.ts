@@ -1,9 +1,12 @@
 import { Client, Intents, TextChannel } from "discord.js";
+import axios from "axios";
+
 import * as dot from "dotenv";
 dot.config();
 
-// TODO: generate POST_TO channel based on user setting / install 
-const { CURATE_FROM, POST_TO, DISCORD_TOKEN } = process.env;
+const { DISCORD_TOKEN } = process.env;
+
+const API = "http://localhost:8080/api";
 
 const client = new Client({
   intents: [
@@ -18,6 +21,12 @@ client.once("ready", () => {
   console.log("Bot is ready");
 });
 
+interface Response {
+  channelId: string;
+  emoji: string;
+  reactionCount: number;
+}
+
 client.on("messageReactionAdd", async (ReactionEmoji) => {
   const reaction = ReactionEmoji;
   try {
@@ -26,26 +35,35 @@ client.on("messageReactionAdd", async (ReactionEmoji) => {
       await reaction.fetch();
     }
 
-    const { message, emoji, count } = reaction;
-    const { channelId } = message;
+    console.log(reaction);
 
-    const sendMessage = () => {
-      return (
-        CURATE_FROM === channelId && // TODO: update channel based on user setting
-        emoji.name === "🥕" && // TODO: update emjoi based on user setting
-        count === 3 // TODO: update count based on user setting
-      );
-    };
+    const response: Response = (
+      await axios.post(`${API}/discord`, {
+        discordId: reaction.message.guildId,
+      })
+    ).data;
 
-    if (sendMessage() && POST_TO) {
-      const channel = client.channels.cache.get(POST_TO);
-      const formattedMessage = `Shared by @${message?.author?.username}\n${message.content}`;
-      if (channel as TextChannel) {
-        (channel as TextChannel).send(formattedMessage);
-        console.log('Message sent.');
-        console.log(formattedMessage);
-      } else {
-        console.log("Issue with curation channel");
+    if (response.channelId) {
+      // check reaction and post to channel
+
+      const { message, emoji, count } = reaction;
+
+      const sendMessage = () => {
+        return (
+          emoji.name === response.emoji && count === response.reactionCount
+        );
+      };
+
+      if (sendMessage()) {
+        const channel = client.channels.cache.get(response.channelId);
+        const formattedMessage = `Shared by @${message?.author?.username}\n${message.content}`;
+        if (channel as TextChannel) {
+          (channel as TextChannel).send(formattedMessage);
+          console.log("Message sent.");
+          console.log(formattedMessage);
+        } else {
+          console.log("Issue with curation channel");
+        }
       }
     }
   } catch (error) {
