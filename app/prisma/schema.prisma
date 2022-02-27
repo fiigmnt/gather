@@ -22,6 +22,7 @@ model Account {
     session_state      String?
     oauth_token_secret String?
     oauth_token        String?
+    guild              Json?
 
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -59,7 +60,7 @@ model Server {
     emoji          String   @default("📰")
     reactionCount  Int      @default(5)
     rewardAmount   Int      @default(0)
-    user           User     @relation(fields: [userId], references: [id])
+    user           User?    @relation(fields: [userId], references: [id])
     curatedChannel Channel? @relation(fields: [channelId], references: [id])
     userId         String
     channelId      String?

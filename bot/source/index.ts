@@ -81,4 +81,41 @@ client.on("messageReactionAdd", async (ReactionEmoji) => {
   }
 });
 
+client.on("guildCreate", async (guild) => {
+  try {
+    console.log(`New guild joined: ${guild.name} (id: ${guild.id}).`);
+
+    // create connect channel
+    const curateChannel = await guild.channels.create("member-curated", {
+      type: "GUILD_TEXT",
+    });
+
+    const log = await guild.fetchAuditLogs({ type: "BOT_ADD", limit: 1 });
+
+    const username = log.entries.first()?.executor?.username;
+
+    if (curateChannel?.id) {
+      console.log(curateChannel.id);
+      console.log(username);
+      console.log(guild.id);
+      // add connect channel and server to db
+      await axios.post(`${API}/create`, {
+        username,
+        server: {
+          id: guild.id,
+          name: guild.name,
+        },
+        curateChannel: {
+          id: curateChannel.id,
+          name: curateChannel.name,
+        },
+      });
+    } else {
+      throw new Error("Couldn't create channel");
+    }
+  } catch (error: any) {
+    throw new Error(error);
+  }
+});
+
 client.login(DISCORD_TOKEN);
