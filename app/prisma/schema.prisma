@@ -48,6 +48,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
 
+    Server Server[]
     @@map("users")
 }
 
@@ -57,8 +58,10 @@ model Server {
     name           String?
     reaction       String?
     reactionCount  Int      @default(5)
+    user           User     @relation(fields: [userId], references: [id])
     curatedChannel Channel? @relation(fields: [channelId], references: [id])
     channelId      String?
+    userId         String
 }
 
 model Channel {
