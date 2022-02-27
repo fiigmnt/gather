@@ -1,5 +1,4 @@
-# Gather
-## A discord curation bot 👾
+# Gather - A discord curation bot 👾
 
 >it's probably nothing
 
