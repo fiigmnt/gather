@@ -14,6 +14,7 @@ CREATE TABLE "accounts" (
     "session_state" TEXT,
     "oauth_token_secret" TEXT,
     "oauth_token" TEXT,
+    "guild" JSONB,
 
     CONSTRAINT "accounts_pkey" PRIMARY KEY ("id")
 );
@@ -40,24 +41,26 @@ CREATE TABLE "users" (
 );
 
 -- CreateTable
-CREATE TABLE "Server" (
+CREATE TABLE "servers" (
     "id" TEXT NOT NULL,
     "discordId" TEXT,
     "name" TEXT,
-    "reaction" TEXT,
+    "emoji" TEXT NOT NULL DEFAULT E'📰',
     "reactionCount" INTEGER NOT NULL DEFAULT 5,
+    "rewardAmount" INTEGER NOT NULL DEFAULT 0,
+    "userId" TEXT NOT NULL,
     "channelId" TEXT,
 
-    CONSTRAINT "Server_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "servers_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Channel" (
+CREATE TABLE "channels" (
     "id" TEXT NOT NULL,
     "discordId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
 
-    CONSTRAINT "Channel_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "channels_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -89,4 +92,7 @@ ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_fkey" FOREIGN KEY ("user
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Server" ADD CONSTRAINT "Server_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "Channel"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "servers" ADD CONSTRAINT "servers_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "servers" ADD CONSTRAINT "servers_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "channels"("id") ON DELETE SET NULL ON UPDATE CASCADE;
