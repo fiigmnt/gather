@@ -1,17 +1,35 @@
 import Emojis from "../../components/emojis";
 import Dashboard from "../../components/dashboard";
 import PickEmoji from "../../components/pick-emoji";
+import { GetServerSideProps } from "next";
+import { getSession, useSession } from "next-auth/react";
 
-export default function DashboardHome() {
+export default function DashboardHome({ data }) {
+  const { data: session } = useSession();
+  console.log(session);
+  const registerEmoji = async (event) => {
+    event.preventDefault();
+
+    const res = await fetch("/api/registerEmoji", {
+      body: JSON.stringify({
+        id: data.id,
+        emoji: event.target.emoji.value,
+        reactionCount: event.target.reactionCount.value,
+        rewardAmount: event.target.rewardAmount.value,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+
+    const result = await res.json();
+  };
   return (
     <Dashboard>
-      <form className="space-y-8 divide-y divide-gray-200">
-        <div className="space-y-8 divide-y divide-gray-200">
-          <div className="grid grid-cols-2">
-            <PickEmoji />
-          </div>
+      <form onSubmit={registerEmoji} className="mx-auto">
+        <div className="mx-auto">
           <div className="pt-8">
-            <div></div>
             <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
               <div className="sm:col-span-4">
                 <label
@@ -26,12 +44,13 @@ export default function DashboardHome() {
                     name="emoji"
                     id="emoji"
                     className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    defaultValue={data.emoji}
                   />
                 </div>
               </div>
               <div className="sm:col-span-4">
                 <label
-                  htmlFor="emoji"
+                  htmlFor="reactionCount"
                   className="block text-sm font-medium text-gray-700"
                 >
                   Reaction threshold
@@ -39,27 +58,28 @@ export default function DashboardHome() {
                 <div className="mt-1">
                   <input
                     type="number"
-                    name="reaction-threshold"
-                    id="reaction-threshold"
+                    name="reactionCount"
+                    id="reactionCount"
                     className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    defaultValue={data.reactionCount}
                   />
                 </div>
               </div>
 
               <div className="sm:col-span-4">
                 <label
-                  htmlFor="email"
+                  htmlFor="rewardAmount"
                   className="block text-sm font-medium text-gray-700"
                 >
                   Reward amount
                 </label>
                 <div className="mt-1">
                   <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
+                    id="rewardAmount"
+                    name="rewardAmount"
+                    type="number"
                     className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    defaultValue={data.rewardAmount}
                   />
                 </div>
               </div>
@@ -77,6 +97,8 @@ export default function DashboardHome() {
                     name="channelName"
                     type="text"
                     className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    defaultValue={data.channelName}
+                    readOnly
                   />
                 </div>
               </div>
@@ -104,3 +126,17 @@ export default function DashboardHome() {
     </Dashboard>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const res = await fetch("http://localhost:3000/api/registerEmoji");
+  const data = await res.json();
+  if (!data) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: { data },
+  };
+};
