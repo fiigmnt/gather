@@ -1,9 +1,8 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import { useSession, signIn, signOut } from "next-auth/react";
+import type { GetServerSideProps, NextPage } from "next";
+import { useSession } from "next-auth/react";
 import Header from "../components/Header";
 import Landing from "../components/Landing";
+import MainDashboard from "../components/MainDashboard";
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
@@ -11,8 +10,7 @@ const Home: NextPage = () => {
     return (
       <>
         <Header />
-        DASHBOARD
-        <button onClick={() => signOut()}>Sign out</button>
+        <MainDashboard />
       </>
     );
   }
