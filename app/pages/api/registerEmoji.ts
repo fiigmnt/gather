@@ -27,11 +27,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({ success: true });
       } else {
         console.error(`Missing data for server: ${req.body}.`);
-        return res.status(500).end();
+        return res.status(500).json({});
       }
     } catch (error) {
       console.error(error);
-      return res.status(500).end();
+      return res.status(500).json({});
     }
   } else if (req.method === "GET") {
     try {
@@ -53,7 +53,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     } catch (error) {
       console.error(error);
-      return res.status(500);
+      return res.status(500).json({});
     }
   }
 };
