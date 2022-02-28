@@ -10,6 +10,7 @@ export default function DashboardHome({ data }) {
   const registerEmoji = async (event) => {
     event.preventDefault();
 
+    console.log(data.id);
     const res = await fetch("/api/registerEmoji", {
       body: JSON.stringify({
         id: data.id,

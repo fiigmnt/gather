@@ -24,7 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             rewardAmount: rA,
           },
         });
-        return res.status(200);
+        return res.status(200).json({ success: true });
       } else {
         console.error(`Missing data for server: ${req.body}.`);
         return res.status(500).end();
@@ -43,29 +43,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           curatedChannel: true,
         },
       });
-      if (
-        server?.curatedChannel?.discordId &&
-        server.emoji &&
-        server.reactionCount &&
-        server.rewardAmount
-      ) {
-        const { id, emoji, reactionCount, rewardAmount } = server;
-        return res.status(200).json({
-          id,
-          channelName: server.curatedChannel.name,
-          emoji,
-          reactionCount,
-          rewardAmount,
-        });
-      } else {
-        const { emoji, reactionCount, rewardAmount } = server;
-        return res.status(200).json({
-          channelName: server.curatedChannel.name,
-          emoji,
-          reactionCount,
-          rewardAmount,
-        });
-      }
+      const { id, emoji, reactionCount, rewardAmount } = server;
+      return res.status(200).json({
+        id,
+        channelName: server.curatedChannel.name,
+        emoji,
+        reactionCount,
+        rewardAmount,
+      });
     } catch (error) {
       console.error(error);
       return res.status(500);
