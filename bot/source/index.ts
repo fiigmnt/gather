@@ -69,7 +69,7 @@ client.on("messageReactionAdd", async (ReactionEmoji) => {
           const { username } = reaction.message.author;
           const { rewardAmount } = response;
           const rewardMessage = `!coin send @${username} ${rewardAmount}`;
-          const rewardDescription = `Rewarding @${username} ${rewardAmount} for their curated post in #${channel.name}`;
+          const rewardDescription = `Rewarding @${username} for their curated post in #${channel.name}`;
           reaction.message.channel.send(rewardDescription);
           reaction.message.channel.send(rewardMessage);
         }
